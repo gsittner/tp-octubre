@@ -1,0 +1,124 @@
+[
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "points",
+    "expression": "value.toNumber()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column points using expression value.toNumber()"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "price",
+    "expression": "value.toNumber()",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column price using expression value.toNumber()"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "title",
+    "expression": "grel:with(value.match(/.*?\\b(19\\d\\d|20[0-2]\\d)\\b.*/), m, if(isNotNull(m), m[0].toNumber(), null))",
+    "onError": "set-to-blank",
+    "newColumnName": "vintage_year",
+    "columnInsertIndex": 12,
+    "description": "Create column vintage_year at index 12 based on column title using expression grel:with(...)"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "price",
+    "expression": "grel:if(isBlank(value), \"Sin precio informado\", if(value < 20, \"1. Económico (<$20)\", if(value <= 50, \"2. Gama Media ($20-$50)\", \"3. Premium (>$50)\")))",
+    "onError": "set-to-blank",
+    "newColumnName": "price_tier",
+    "columnInsertIndex": 6,
+    "description": "Create column price_tier at index 6 based on column price using expression grel:if(...)"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "description",
+    "expression": "grel:with(filter([if(value.toLowercase().contains(\"oak\"), \"Roble\", null), if(value.toLowercase().contains(\"tannin\"), \"Taninos\", null), if(value.toLowercase().contains(\"cherry\"), \"Cereza\", null), if(value.toLowercase().contains(\"plum\"), \"Ciruela\", null)], v, isNonBlank(v)).join(\", \"), tags, if(isNonBlank(tags), tags, \"Equilibrado / Sutil\"))",
+    "onError": "set-to-blank",
+    "newColumnName": "perfil_sensorial",
+    "columnInsertIndex": 3,
+    "description": "Create column perfil_sensorial at index 3 based on column description using expression grel:with(...)"
+  },
+  {
+    "op": "core/column-removal",
+    "columnName": "taster_twitter_handle",
+    "description": "Remove column taster_twitter_handle"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "designation",
+    "expression": "grel:if(isBlank(value), \"Sin designación\", value)",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column designation using expression grel:if(isBlank(value), \"Sin designación\", value)"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "taster_name",
+    "expression": "grel:if(isBlank(value), \"Catador anónimo\", value)",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column taster_name using expression grel:if(isBlank(value), \"Catador anónimo\", value)"
+  },
+  {
+    "op": "core/column-addition",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "baseColumnName": "vintage_year",
+    "expression": "grel:if(isBlank(value), 1, 0)",
+    "onError": "set-to-blank",
+    "newColumnName": "is_non_vintage",
+    "columnInsertIndex": 13,
+    "description": "Create column is_non_vintage at index 13 based on column vintage_year using expression grel:if(isBlank(value), 1, 0)"
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "vintage_year",
+    "expression": "grel:if(isBlank(value), 0, value)",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10,
+    "description": "Text transform on cells in column vintage_year using expression grel:if(isBlank(value), 0, value)"
+  }
+]
